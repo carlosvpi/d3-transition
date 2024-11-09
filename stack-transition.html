@@ -7,19 +7,21 @@
   <body onload="main()">
   </body>
   <script>
-    const stackTransition = arcs => function (element) {
+    const stackTransition = _data => function (element) {
       const ease = element.ease()
       const duration = element.duration()
       const data = []
-      arcs.forEach(slice => data.push({ slice, length: slice.data, start: data[data.length - 1]?.end ?? 0, end: (data[data.length - 1]?.end ?? 0) + slice.data }))
+      _data.forEach((datum, i) => data.push({ start: i === 0 ? 0 : data[i - 1].end, end: datum + (i === 0 ? 0 : data[i - 1].end), length: datum }))
       const sum = d3.sum(data, d => d.length)
       const scales = data.map(({ start, end }) => d3.scaleLinear([start/sum, end/sum], [0, 1]))
+
       element.delay(0)
         .duration(duration)
         .easeVarying((v, i, slices) => t => {
           let variation = scales[i](ease(t))
           if (variation <= 0 && i > 0) {
             d3.select(slices[i]).attr('opacity', 0)
+            variation = 0
           }
           if (variation > 0) {
             d3.select(slices[i]).attr('opacity', 1)
@@ -86,7 +88,7 @@
         singleSlicePie({ svg, fill: d3.scaleOrdinal(d3.schemeAccent), width, height, radius, ease: d3[ease], y: height / 4 + 10 })
         stackAnimatedPie({ svg, fill: d3.scaleOrdinal(d3.schemeAccent), width, height, radius, ease: d3[ease], y: height * 3 / 4 })
       })
-      easers.slice(0,0).forEach(ease => {
+      easers.forEach(ease => {
         const width = 250;
         const height = 140;
         const radius = 60;
@@ -104,8 +106,8 @@
           .attr('height', height - 1)
           .attr('stroke', 'black')
           .attr('fill-opacity', 0)
-        // singleBar({ svg, fill: d3.scaleOrdinal(d3.schemeAccent), width, height: 100, top: 40, ease: d3[ease], x: width / 4 - 25 })
-        stackAnimatedBar({ svg, fill: d3.scaleOrdinal(d3.schemeAccent), width, height, ease: d3[ease], y: height * 3 / 4, x: width * 3 / 4 - 25, top: 40 })
+        singleBar({ svg, fill: d3.scaleOrdinal(d3.schemeAccent), width, height: 100, top: 40, ease: d3[ease], x: width / 4 - 25 })
+        stackAnimatedBar({ svg, fill: d3.scaleOrdinal(d3.schemeAccent), width, height: 100, ease: d3[ease], y: height * 3 / 4, x: width * 3 / 4 - 25, top: 40 })
       })
     }
     function singleSlicePie({ svg, width, height, radius, ease, fill, y }) {
@@ -143,7 +145,6 @@
       const data = [21, 13, 8, 5, 3, 2, 1, 1];
       const pie = d3.pie();
       const arcs = pie(data);
-      debugger
 
       svg.append('g')
         .attr('transform', `translate(${width / 2}, ${y})`)
@@ -164,7 +165,7 @@
         .transition()
         .duration(5000)
         .ease(ease)
-        .call(stackTransition(arcs))
+        .call(stackTransition(data))
         .attrTween('d', v => t => d3.arc()
           .innerRadius(0)
           .outerRadius(radius)
@@ -197,7 +198,7 @@
       const stack = d3.stack()
         .keys([...data.keys()])
         ([Object.fromEntries(data.map((v,i)=>[i,v]))])
-      const yScale = d3.scaleLinear([0, stack[stack.length - 1][0][1]], [0, height])
+      const yScale = d3.scaleLinear([0, d3.sum(data)], [0, height])
       svg.append('g')
         .selectAll('rect')
         .data(stack)
@@ -205,7 +206,7 @@
         .append('rect')
         .attr('width', 25)
         .attr('x', x)
-        .attr('y', height + top)
+        .attr('y', v => height + top - yScale(v[0][0]))
         .attr('height', 0)
         .attr('fill', fill)
         .attr('stroke', 'black')
@@ -213,16 +214,13 @@
         .transition()
         .duration(5000)
         .ease(ease)
-        .call(stackTransition)
+        .call(stackTransition(data))
         .attr('y', v => {
-          console.log(top + height - yScale(v[0][0]))
-          debugger
-          return top + height - yScale(v[0][0])
+          return top + height - yScale(v[0][1])
         })
         .attr('height', v => {
           return yScale(v[0].data[v.index])
         })
     }
-
   </script>
 </html>
