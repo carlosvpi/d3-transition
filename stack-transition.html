@@ -109,6 +109,27 @@
         singleBar({ svg, fill: d3.scaleOrdinal(d3.schemeAccent), width, height: 100, top: 40, ease: d3[ease], x: width / 4 - 25 })
         stackAnimatedBar({ svg, fill: d3.scaleOrdinal(d3.schemeAccent), width, height: 100, ease: d3[ease], y: height * 3 / 4, x: width * 3 / 4 - 25, top: 40 })
       })
+      easers.forEach(ease => {
+        const width = 250;
+        const height = 140;
+        const radius = 60;
+        const svg = d3.select('body')
+          .append('svg')
+          .attr('width', width)
+          .attr('height', height);
+        svg.append('text')
+          .attr('y', 15)
+          .attr('x', width / 2)
+          .attr('text-anchor', 'middle')
+          .text(ease)
+        svg.append('rect')
+          .attr('width', width - 1)
+          .attr('height', height - 1)
+          .attr('stroke', 'black')
+          .attr('fill-opacity', 0)
+        areaChart({ svg, fill: d3.scaleOrdinal(d3.schemeAccent), width, height: 100, top: 40, ease: d3[ease], x: width / 4 - 25 })
+        stackAreaBar({ svg, fill: d3.scaleOrdinal(d3.schemeAccent), width, height: 100, ease: d3[ease], y: height * 3 / 4, x: width * 3 / 4 - 25, top: 40 })
+      })
     }
     function singleSlicePie({ svg, width, height, radius, ease, fill, y }) {
       const data = [54]
