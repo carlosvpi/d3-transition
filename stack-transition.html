@@ -7,11 +7,11 @@
   <body onload="main()">
   </body>
   <script>
-    const stackTransition = originalData => function (element) {
+    const stackTransition = infoData => function (element) {
       const ease = element.ease()
       const duration = element.duration()
       const data = []
-      originalData.forEach((datum, i) => data.push({ start: i === 0 ? 0 : data[i - 1].end, end: datum + (i === 0 ? 0 : data[i - 1].end), length: datum }))
+      infoData.forEach((datum, i) => data.push({ start: i === 0 ? 0 : data[i - 1].end, end: datum + (i === 0 ? 0 : data[i - 1].end), length: datum }))
       const sum = d3.sum(data, d => d.length)
       const scales = data.map(({ start, end }) => d3.scaleLinear([start/sum, end/sum], [0, 1]))
 
