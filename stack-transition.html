@@ -37,98 +37,68 @@
     }
     
     function main() {
-      const easers = [
-        'easeLinear',
-        'easePolyIn',
-        'easePolyOut',
-        'easePolyInOut',
-        'easeQuadIn',
-        'easeQuadOut',
-        'easeQuadInOut',
-        'easeCubicIn',
-        'easeCubicOut',
-        'easeCubicInOut',
-        'easeSinIn',
-        'easeSinOut',
-        'easeSinInOut',
-        'easeExpIn',
-        'easeExpOut',
-        'easeExpInOut',
-        'easeCircleIn',
-        'easeCircleOut',
-        'easeCircleInOut',
-        'easeElasticIn',
-        'easeElasticOut',
-        'easeElasticInOut',
-        'easeBackIn',
-        'easeBackOut',
-        'easeBackInOut',
-        'easeBounceIn',
-        'easeBounceOut',
-        'easeBounceInOut'
-      ]
-      easers.forEach(ease => {
-        const width = 140;
-        const height = 280;
-        const radius = 60;
-        const svg = d3.select('body')
-          .append('svg')
-          .attr('width', width)
-          .attr('height', height);
-        svg.append('text')
-          .attr('y', 15)
-          .attr('x', width / 2)
-          .attr('text-anchor', 'middle')
-          .text(ease)
-        svg.append('rect')
-          .attr('width', width - 1)
-          .attr('height', height - 1)
-          .attr('stroke', 'black')
-          .attr('fill-opacity', 0)
+      function visualCompare ({ width, height, ...props }, action) {
+        const easers = [
+          'easeLinear',
+          'easePolyIn',
+          'easePolyOut',
+          'easePolyInOut',
+          'easeQuadIn',
+          'easeQuadOut',
+          'easeQuadInOut',
+          'easeCubicIn',
+          'easeCubicOut',
+          'easeCubicInOut',
+          'easeSinIn',
+          'easeSinOut',
+          'easeSinInOut',
+          'easeExpIn',
+          'easeExpOut',
+          'easeExpInOut',
+          'easeCircleIn',
+          'easeCircleOut',
+          'easeCircleInOut',
+          'easeElasticIn',
+          'easeElasticOut',
+          'easeElasticInOut',
+          'easeBackIn',
+          'easeBackOut',
+          'easeBackInOut',
+          'easeBounceIn',
+          'easeBounceOut',
+          'easeBounceInOut'
+        ]
+        easers.forEach(ease => {
+          const svg = d3.select('body')
+            .append('svg')
+            .attr('width', width)
+            .attr('height', height);
+          svg.append('text')
+            .attr('y', 15)
+            .attr('x', width / 2)
+            .attr('text-anchor', 'middle')
+            .text(ease)
+          svg.append('rect')
+            .attr('width', width - 1)
+            .attr('height', height - 1)
+            .attr('stroke', 'black')
+            .attr('fill-opacity', 0)
+          action({ svg, width, height, ease, ...props })
+        })
+      }
+      visualCompare({ width: 140, height: 280, radius: 60 }, ({ svg, width, height, radius, ease }) => {
         singleSlicePie({ svg, fill: d3.scaleOrdinal(d3.schemeAccent), width, height, radius, ease: d3[ease], y: height / 4 + 10 })
         stackAnimatedPie({ svg, fill: d3.scaleOrdinal(d3.schemeAccent), width, height, radius, ease: d3[ease], y: height * 3 / 4 })
       })
-      easers.forEach(ease => {
-        const width = 250;
-        const height = 140;
-        const radius = 60;
-        const svg = d3.select('body')
-          .append('svg')
-          .attr('width', width)
-          .attr('height', height);
-        svg.append('text')
-          .attr('y', 15)
-          .attr('x', width / 2)
-          .attr('text-anchor', 'middle')
-          .text(ease)
-        svg.append('rect')
-          .attr('width', width - 1)
-          .attr('height', height - 1)
-          .attr('stroke', 'black')
-          .attr('fill-opacity', 0)
-        singleBar({ svg, fill: d3.scaleOrdinal(d3.schemeAccent), width, height: 100, top: 40, ease: d3[ease], x: width / 4 - 25 })
-        stackAnimatedBar({ svg, fill: d3.scaleOrdinal(d3.schemeAccent), width, height: 100, ease: d3[ease], y: height * 3 / 4, x: width * 3 / 4 - 25, top: 40 })
+      visualCompare({ width: 250, height: 140, top: 40 }, ({ svg, width, ease, top }) => {
+        singleBar({ svg, fill: d3.scaleOrdinal(d3.schemeAccent), width, height: 100, ease: d3[ease], x: width / 4 - 25, top })
+        stackAnimatedBar({ svg, fill: d3.scaleOrdinal(d3.schemeAccent), width, height: 100, ease: d3[ease], x: width * 3 / 4 - 25, top })
       })
-      easers.forEach(ease => {
-        const width = 250;
-        const height = 140;
-        const radius = 60;
-        const svg = d3.select('body')
-          .append('svg')
-          .attr('width', width)
-          .attr('height', height);
-        svg.append('text')
-          .attr('y', 15)
-          .attr('x', width / 2)
-          .attr('text-anchor', 'middle')
-          .text(ease)
-        svg.append('rect')
-          .attr('width', width - 1)
-          .attr('height', height - 1)
-          .attr('stroke', 'black')
-          .attr('fill-opacity', 0)
-        areaChart({ svg, fill: d3.scaleOrdinal(d3.schemeAccent), width, height: 100, top: 40, ease: d3[ease], x: width / 4 - 25 })
-        stackAreaBar({ svg, fill: d3.scaleOrdinal(d3.schemeAccent), width, height: 100, ease: d3[ease], y: height * 3 / 4, x: width * 3 / 4 - 25, top: 40 })
+      const series = [[38,38,30,24,23,17,17,15,21,22,20,17,20,25,24,17,12,4,12,7,12],[31,38,38,32,32,34,37,36,34,32,29,27,18,17,14,12,2,-5,2,5,7],[32,22,27,31,39,32,39,38,37,35,33,32,26,24,27,24,19,17,7,6,4],[30,27,23,18,13,19,14,9,6,6,7,8,4,8,9,9,11,10,9,6,3]]
+      const sumData = Array(20).fill().map((_, i) => series.reduce((acc, serie) => acc + serie[i], 0))
+      visualCompare({ width: 350, height: 280, top: 40 }, ({ svg, width, ease, top }) => {
+        singleArea({ svg, fill: d3.scaleOrdinal(d3.schemeAccent), width, height: 100, ease: d3[ease], x: width / 4 - 25, top, data: sumData })
+        stackAnimatedArea({ svg, fill: d3.scaleOrdinal(d3.schemeAccent), width, height: 100, ease: d3[ease], x: width * 3 / 4 - 25, top, data: series })
       })
     }
     function singleSlicePie({ svg, width, height, radius, ease, fill, y }) {
@@ -194,7 +164,7 @@
           .endAngle(v.endAngle * t + v.startAngle * (1 - t))()
         );
     }
-    function singleBar({ svg, width, height, radius, ease, fill, top, x }) {
+    function singleBar({ svg, width, height, ease, fill, top, x }) {
       const data = [54]
       svg.append('g')
         .selectAll('.element')
@@ -214,7 +184,7 @@
         .attr('y', top)
         .attr('height', height);
     }
-    function stackAnimatedBar({ svg, width, height, radius, ease, fill, top, x }) {
+    function stackAnimatedBar({ svg, width, height, ease, fill, top, x }) {
       const data = [21, 13, 8, 5, 3, 2, 1, 1]
       const stack = d3.stack()
         .keys([...data.keys()])
@@ -242,6 +212,44 @@
         .attr('height', v => {
           return yScale(v[0].data[v.index])
         })
+    }
+    function singleArea({ svg, width, height, ease, fill, data, top }) {
+      const y = d3.scaleLinear([0, d3.max(data)], [height + top, top])
+      const x = d3.scaleLinear([0, data.length], [0, width])
+      const area0 = d3.area()
+        .x((_, i) => x(i))
+        .y0(y(0))
+        .y1(y(0))
+      svg.append('path')
+        .attr('d', area0(data))
+        .attr('fill', fill)
+        .transition()
+        .duration(5000)
+        .ease(ease)
+        .attrTween('d', _ => t => d3.area()
+          .x((_, i) => x(i))
+          .y0(y(0))
+          .y1(v => (1 - t) * y(0) + t * y(v))(data)
+        )
+    }
+    function stackAnimatedArea({ svg, width, height, ease, fill, data, top }) {
+      // const y = d3.scaleLinear([0, d3.max(data)], [height + top, top])
+      // const x = d3.scaleLinear([0, data.length], [0, width])
+      // const area0 = d3.area()
+      //   .x((_, i) => x(i))
+      //   .y0(y(0))
+      //   .y1(y(0))
+      // svg.append('path')
+      //   .attr('d', area0(data))
+      //   .attr('fill', fill)
+      //   .transition()
+      //   .duration(5000)
+      //   .ease(ease)
+      //   .attrTween('d', _ => t => d3.area()
+      //     .x((_, i) => x(i))
+      //     .y0(y(0))
+      //     .y1(v => (1 - t) * y(0) + t * y(v))(data)
+      //   )
     }
   </script>
 </html>
