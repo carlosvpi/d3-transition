@@ -7,25 +7,25 @@
   <body onload="main()">
   </body>
   <script>
-    const stackTransition = data => function (element) {
-      const ease = element.ease()
-      const duration = element.duration()
+    function stackTransition(data) {
       const total = d3.sum(data)
       const scales = d3.stack()
         .keys([...data.keys()])
         ([data])
         .map(([[start, end]]) => d3.scaleLinear([start/total, end/total], [0, 1]))
 
-      element.delay(0)
-        .duration(duration)
-        .easeVarying((_, i, slices) => t => {
-          let variation = scales[i](ease(t))
-          if (variation <= 0 && i > 0) return 0
-          if (variation > 1 && i < slices.length - 1) return 1
-          return variation
-        })
+      return function (element) {
+        const ease = element.ease()
+        element.delay(0)
+          .duration(element.duration())
+          .easeVarying((_, i, slices) => t => {
+            let variation = scales[i](ease(t))
+            if (variation <= 0 && i > 0) return 0
+            if (variation > 1 && i < slices.length - 1) return 1
+            return variation
+          })
+      }
     }
-    
     function main() {
       function visualCompare ({ width, height, ...props }, action) {
         const easers = [
@@ -84,12 +84,6 @@
         singleBar({ svg, fill: d3.scaleOrdinal(d3.schemeAccent), width, height: 100, ease: d3[ease], x: width / 4 - 25, top })
         stackAnimatedBar({ svg, fill: d3.scaleOrdinal(d3.schemeAccent), width, height: 100, ease: d3[ease], x: width * 3 / 4 - 25, top })
       })
-      // const series = [[38,38,30,24,23,17,17,15,21,22,20,17,20,25,24,17,12,4,12,7,12],[31,38,38,32,32,34,37,36,34,32,29,27,18,17,14,12,2,-5,2,5,7],[32,22,27,31,39,32,39,38,37,35,33,32,26,24,27,24,19,17,7,6,4],[30,27,23,18,13,19,14,9,6,6,7,8,4,8,9,9,11,10,9,6,3]]
-      // const sumData = Array(20).fill().map((_, i) => series.reduce((acc, serie) => acc + serie[i], 0))
-      // visualCompare({ width: 350, height: 280 }, ({ svg, width, ease }) => {
-      //   // singleArea({ svg, fill: d3.scaleOrdinal(d3.schemeAccent), width, height: 100, ease: d3[ease], x: width / 4 - 25, top: 40, data: sumData })
-      //   stackAnimatedArea({ svg, fill: d3.scaleOrdinal(d3.schemeAccent), width, height: 100, ease: d3[ease], x: width * 3 / 4 - 25, top: 180, data: series })
-      // })
     }
     function singleSlicePie({ svg, width, height, radius, ease, fill, y }) {
       const data = [54]
@@ -207,50 +201,5 @@
           return yScale(v[0].data[v.index])
         })
     }
-    // function singleArea({ svg, width, height, ease, fill, data, top }) {
-    //   const y = d3.scaleLinear([0, d3.max(data)], [height + top, top])
-    //   const x = d3.scaleLinear([0, data.length], [0, width])
-    //   const area0 = d3.area()
-    //     .x((_, i) => x(i))
-    //     .y0(y(0))
-    //     .y1(y(0))
-    //   svg.append('path')
-    //     .attr('d', area0(data))
-    //     .attr('fill', fill)
-    //     .transition()
-    //     .duration(5000)
-    //     .ease(ease)
-    //     .attrTween('d', _ => t => d3.area()
-    //       .x((_, i) => x(i))
-    //       .y0(y(0))
-    //       .y1(v => (1 - t) * y(0) + t * y(v))(data)
-    //     )
-    // }
-    // function stackAnimatedArea({ svg, width, height, ease, fill, data, top }) {
-    //   const stack = d3.stack().keys([...data.keys()])(d3.transpose(data))
-    //   const y = d3.scaleLinear([0, d3.max(stack.map(serie => d3.max(serie.map(([_, e]) => e))))], [height + top, top])
-    //   const x = d3.scaleLinear([0, data[0].length], [0, width])
-    //   const area0 = d3.area()
-    //     .x((_, i) => x(i))
-    //     .y0(y(0))
-    //     .y1(y(0))
-    //   svg.append('g')
-    //     .selectAll('.area')
-    //     .data(stack)
-    //     .enter()
-    //     .append('path')
-    //     .classed('area', true)
-    //     .attr('d', area0)
-    //     .attr('fill', fill)
-    //     .transition()
-    //     .duration(5000)
-    //     .ease(ease)
-    //     .call(stackTransition(data))
-    //     .attrTween('d', d => t => d3.area()
-    //       .x((_, i) => x(i))
-    //       .y0(([start, end]) => y(start))
-    //       .y1(([start, end]) => (1 - t) * y(start) + t * y(end))(d)
-    //     )
-    // }
   </script>
 </html>
