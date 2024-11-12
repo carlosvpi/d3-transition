@@ -7,7 +7,7 @@ export default function stackTransition(data) {
 
   return function (element) {
     const ease = element.ease()
-    element.delay(0)
+    element.delay(element.delay())
       .duration(element.duration())
       .easeVarying((_, i, slices) => t => {
         let variation = scales[i](ease(t))
